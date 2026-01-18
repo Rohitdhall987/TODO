@@ -3,6 +3,7 @@
 //
 
 #include "core.h"
+#include "types.h"
 #include "utils.h"
 #include <cstdint>
 #include <curses.h>
@@ -46,6 +47,7 @@ void App::displayMainMenu(uint16_t &option) {
 
 void App::displayViewTasks(uint16_t &option) {
   static size_t opt;
+
   if (tasks.size()) {
     display_tasks(3, opt, tasks);
   } else {
@@ -60,15 +62,53 @@ void App::displayViewTasks(uint16_t &option) {
   case 27:
     option = 0;
     break;
+  case ' ':
+    this->updateStatus(tasks[opt]);
+    break;
   case KEY_UP:
+    if (opt > 0)
+      opt--;
     break;
   case KEY_DOWN:
+    if (opt < tasks.size() - 1)
+      opt++;
     break;
   default:;
   }
 }
 
-void App::displayEditTask(uint16_t &option) {}
+void App::displayEditTask(uint16_t &option) {
+
+  static size_t opt;
+
+  if (tasks.size()) {
+    display_tasks(3, opt, tasks);
+  } else {
+    mvprintw(3, 1, "YOU HAVE NO TASKES TO DO!");
+  }
+
+  switch (getch()) {
+  case 'q':
+  case 'Q':
+    this->exit();
+    break;
+  case 27:
+    option = 0;
+    break;
+  case ' ':
+    option = 5;
+    break;
+  case KEY_UP:
+    if (opt > 0)
+      opt--;
+    break;
+  case KEY_DOWN:
+    if (opt < tasks.size() - 1)
+      opt++;
+    break;
+  default:;
+  }
+}
 
 void App::displayAddTask(uint16_t &option) {
   echo();
@@ -87,7 +127,7 @@ void App::displayAddTask(uint16_t &option) {
   getnstr(buff, sizeof(buff) - 1);
   std::string d(buff);
 
-  addTask(t, d);
+  this->addTask(t, d);
 
   noecho();
   curs_set(0);
@@ -95,7 +135,37 @@ void App::displayAddTask(uint16_t &option) {
   option = 0;
 }
 
-void App::displayDeleteTask(uint16_t &option) {}
+void App::displayDeleteTask(uint16_t &option) {
+  static size_t opt;
+
+  if (tasks.size()) {
+    display_tasks(3, opt, tasks);
+  } else {
+    mvprintw(3, 1, "YOU HAVE NO TASKES TO DO!");
+  }
+
+  switch (getch()) {
+  case 'q':
+  case 'Q':
+    this->exit();
+    break;
+  case 27:
+    option = 0;
+    break;
+  case ' ':
+    this->deleteTask(opt);
+    break;
+  case KEY_UP:
+    if (opt > 0)
+      opt--;
+    break;
+  case KEY_DOWN:
+    if (opt < tasks.size() - 1)
+      opt++;
+    break;
+  default:;
+  }
+}
 
 void App::addTask(std::string title, std::string des) {
   Task new_Task;
@@ -105,6 +175,17 @@ void App::addTask(std::string title, std::string des) {
   new_Task.status = PENDING;
 
   tasks.push_back(new_Task);
+}
+
+void App::deleteTask(size_t index) { tasks.erase(tasks.begin() + index); }
+
+void App::updateStatus(Task &t) {
+
+  if (t.status == COMPLETED) {
+    t.status = PENDING;
+  } else {
+    t.status++;
+  }
 }
 
 bool App::isRunning() const { return running; }

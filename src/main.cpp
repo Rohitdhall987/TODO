@@ -30,6 +30,14 @@ int main() {
       app.displayAddTask(option);
       break;
 
+    case 3:
+      app.displayEditTask(option);
+      break;
+
+    case 4:
+      app.displayDeleteTask(option);
+      break;
+
     default:
       app.displayMainMenu(option);
       break;

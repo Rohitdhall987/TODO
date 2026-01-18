@@ -16,6 +16,8 @@ class App {
   std::vector<Task> tasks;
 
   void addTask(std::string title, std::string des);
+  void deleteTask(size_t index);
+  void updateStatus(Task &t);
 
 public:
   App();
