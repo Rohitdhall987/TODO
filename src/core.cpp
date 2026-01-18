@@ -6,6 +6,7 @@
 #include "utils.h"
 #include <cstdint>
 #include <curses.h>
+#include <ncurses.h>
 
 App::App() {
   running = true;
@@ -14,11 +15,13 @@ App::App() {
 }
 
 void App::displayMainMenu(uint16_t &option) {
-  uint8_t opt;
+  static uint8_t opt;
   const std::vector<std::string> options = {"VIEW TASKS", "ADD TASKS",
                                             "EDIT TASKS", "DELETE TASKS"};
 
   display_options(3, opt - 1, options);
+
+  mvprintw(7, 1, "%d", opt);
 
   switch (getch()) {
   case 'Q':
