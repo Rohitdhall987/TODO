@@ -26,11 +26,14 @@ int main() {
       app.displayViewTasks(option);
       break;
 
+    case 2:
+      app.displayAddTask(option);
+      break;
+
     default:
       app.displayMainMenu(option);
       break;
     }
-
     refresh();
   }
 

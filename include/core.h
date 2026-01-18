@@ -15,6 +15,8 @@ class App {
   bool running = false;
   std::vector<Task> tasks;
 
+  void addTask(std::string title, std::string des);
+
 public:
   App();
   bool isRunning() const;
@@ -23,7 +25,6 @@ public:
   void displayAddTask(uint16_t &option);
   void displayEditTask(uint16_t &option);
   void displayDeleteTask(uint16_t &option);
-  void addTask(std::string title, std::string des);
   void exit();
 };
 

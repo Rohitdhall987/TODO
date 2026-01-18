@@ -21,8 +21,6 @@ void App::displayMainMenu(uint16_t &option) {
 
   display_options(3, opt - 1, options);
 
-  mvprintw(7, 1, "%d", opt);
-
   switch (getch()) {
   case 'Q':
   case 'q':
@@ -46,11 +44,56 @@ void App::displayMainMenu(uint16_t &option) {
   }
 }
 
-void App::displayViewTasks(uint16_t &option) {}
+void App::displayViewTasks(uint16_t &option) {
+  static size_t opt;
+  if (tasks.size()) {
+    display_tasks(3, opt, tasks);
+  } else {
+    mvprintw(3, 1, "YOU HAVE NO TASKES TO DO!");
+  }
+
+  switch (getch()) {
+  case 'q':
+  case 'Q':
+    this->exit();
+    break;
+  case 27:
+    option = 0;
+    break;
+  case KEY_UP:
+    break;
+  case KEY_DOWN:
+    break;
+  default:;
+  }
+}
 
 void App::displayEditTask(uint16_t &option) {}
 
-void App::displayAddTask(uint16_t &option) {}
+void App::displayAddTask(uint16_t &option) {
+  echo();
+  curs_set(1);
+
+  char buff[256];
+
+  mvprintw(3, 0, "Enter Task info");
+  mvprintw(4, 0, "Enter Title: ");
+
+  getnstr(buff, sizeof(buff) - 1);
+  std::string t(buff);
+
+  mvprintw(5, 0, "Enter Descritption:");
+
+  getnstr(buff, sizeof(buff) - 1);
+  std::string d(buff);
+
+  addTask(t, d);
+
+  noecho();
+  curs_set(0);
+
+  option = 0;
+}
 
 void App::displayDeleteTask(uint16_t &option) {}
 
