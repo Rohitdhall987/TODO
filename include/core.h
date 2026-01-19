@@ -18,6 +18,7 @@ class App {
   void addTask(std::string title, std::string des);
   void deleteTask(size_t index);
   void updateStatus(Task &t);
+  void updateTask(size_t index, std::string t, std::string d);
 
 public:
   App();

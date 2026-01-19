@@ -80,6 +80,33 @@ void App::displayViewTasks(uint16_t &option) {
 void App::displayEditTask(uint16_t &option) {
 
   static size_t opt;
+  static int16_t selected = -1;
+
+  if (selected != -1) {
+    echo();
+    curs_set(1);
+
+    char buff[256];
+
+    mvprintw(3, 0,
+             "Enter Task Updated info (keep fields empty to use the previos "
+             "values)");
+    mvprintw(4, 0, "Enter Title: ");
+
+    getnstr(buff, sizeof(buff) - 1);
+    std::string t(buff);
+
+    mvprintw(5, 0, "Enter Descritption: ");
+
+    getnstr(buff, sizeof(buff) - 1);
+    std::string d(buff);
+
+    this->updateTask(selected, t, d);
+
+    selected = -1;
+
+    return;
+  }
 
   if (tasks.size()) {
     display_tasks(3, opt, tasks);
@@ -94,9 +121,10 @@ void App::displayEditTask(uint16_t &option) {
     break;
   case 27:
     option = 0;
+    selected = -1;
     break;
   case ' ':
-    option = 5;
+    selected = opt;
     break;
   case KEY_UP:
     if (opt > 0)
@@ -122,7 +150,7 @@ void App::displayAddTask(uint16_t &option) {
   getnstr(buff, sizeof(buff) - 1);
   std::string t(buff);
 
-  mvprintw(5, 0, "Enter Descritption:");
+  mvprintw(5, 0, "Enter Descritption: ");
 
   getnstr(buff, sizeof(buff) - 1);
   std::string d(buff);
@@ -185,6 +213,16 @@ void App::updateStatus(Task &t) {
     t.status = PENDING;
   } else {
     t.status++;
+  }
+}
+
+void App::updateTask(size_t index, std::string t, std::string d) {
+  if (!t.empty()) {
+    tasks[index].Title = t;
+  }
+
+  if (!d.empty()) {
+    tasks[index].Des = d;
   }
 }
 
