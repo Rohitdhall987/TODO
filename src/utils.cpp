@@ -49,3 +49,18 @@ void display_tasks(int start_row, uint16_t opt, std::vector<Task> &tasks) {
       attroff(A_REVERSE);
   }
 }
+
+void to_json(json &j, const Task &t) {
+  j = json{{"id", t.id},
+           {"title", t.Title},
+           {"description", t.Des},
+           {"status", t.status}};
+}
+
+void from_json(const json &j, Task &t) {
+  j.at("id").get_to(t.id);
+  j.at("title").get_to(t.Title);
+  j.at("description").get_to(t.Des);
+
+  t.status = j.value("status", PENDING);
+}

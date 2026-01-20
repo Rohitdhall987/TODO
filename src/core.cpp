@@ -6,13 +6,28 @@
 #include "types.h"
 #include "utils.h"
 #include <cstdint>
+#include <cstdlib>
 #include <curses.h>
+#include <fstream>
 #include <ncurses.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 App::App() {
+
+  std::ifstream file("Data.json");
+
+  if (file.is_open() && file.peek() != std::ifstream::traits_type::eof()) {
+    json j = json::parse(file);
+    tasks = j.get<std::vector<Task>>();
+    auto_id = tasks[tasks.size() - 1].id + 1;
+  } else {
+    tasks = {};
+    auto_id = 0;
+  }
+
   running = true;
-  tasks = {};
-  auto_id = 0;
 }
 
 void App::displayMainMenu(uint16_t &option) {
@@ -228,4 +243,8 @@ void App::updateTask(size_t index, std::string t, std::string d) {
 
 bool App::isRunning() const { return running; }
 
-void App::exit() { running = false; }
+void App::exit() {
+  std::ofstream file("Data.json");
+  file << json(tasks).dump(4);
+  running = false;
+}
